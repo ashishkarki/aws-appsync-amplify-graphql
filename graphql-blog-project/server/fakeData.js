@@ -20,6 +20,7 @@ const getFakeHobbies = (howMany = 5) => {
       id: i + '',
       title: faker.name.jobArea(),
       description: faker.lorem.sentence(),
+      userId: getRandomUserId(0, howMany - 1),
     })
   }
 
@@ -41,7 +42,7 @@ const getFakePosts = (howMany = 5) => {
 }
 
 const getRandomUserId = (min = 0, max = 5) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min
+  return (Math.floor(Math.random() * (max - min + 1)) + min).toString()
 }
 
 module.exports = {
