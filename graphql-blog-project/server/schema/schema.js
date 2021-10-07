@@ -8,6 +8,11 @@ const {
   GraphQLSchema,
 } = graphql
 
+// store or temp DB
+const usersData = getFakeUsers()
+const hobbiesData = getFakeHobbies()
+const postsData = getFakePosts()
+
 // create types
 const UserType = new GraphQLObjectType({
   name: 'User',
@@ -36,6 +41,12 @@ const PostType = new GraphQLObjectType({
   fields: () => ({
     id: { type: GraphQLID },
     comment: { type: GraphQLString },
+    user: {
+      type: UserType,
+      resolve: (parent, args) => {
+        return usersData.find((user) => user.id == parent.userId)
+      },
+    },
   }),
 })
 
@@ -48,21 +59,21 @@ const RootQuery = new GraphQLObjectType({
       type: UserType,
       args: { id: { type: GraphQLID } },
       resolve: (parent, args) => {
-        return getFakeUsers().find((fakeUser) => fakeUser.id === args.id)
+        return usersData.find((fakeUser) => fakeUser.id === args.id)
       },
     },
     hobby: {
       type: HobbyType,
       args: { id: { type: GraphQLID } },
       resolve: (parent, args) => {
-        return getFakeHobbies().find((fakeHobby) => fakeHobby.id === args.id)
+        return hobbiesData.find((fakeHobby) => fakeHobby.id === args.id)
       },
     },
     post: {
       type: PostType,
       args: { id: { type: GraphQLID } },
       resolve: (parent, args) => {
-        return getFakePosts().find((fakePost) => fakePost.id === args.id)
+        return postsData.find((fakePost) => fakePost.id === args.id)
       },
     },
   },
