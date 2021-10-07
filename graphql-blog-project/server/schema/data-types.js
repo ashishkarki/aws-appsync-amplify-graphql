@@ -24,6 +24,7 @@ const UserType = new GraphQLObjectType({
         return postsData.filter((post) => post.userId === parent.id)
       },
     },
+
     hobbies: {
       type: new GraphQLList(HobbyType),
       resolve: (parent, _args) => {
