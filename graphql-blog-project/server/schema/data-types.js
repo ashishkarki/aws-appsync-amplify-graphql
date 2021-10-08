@@ -6,7 +6,8 @@ const {
   GraphQLInt,
 } = require('graphql')
 
-const { usersData, hobbiesData, postsData } = require('../fakeData')
+// const { usersData, hobbiesData, postsData } = require('../fakeData')
+const { UserModel, PostModel, HobbyModel } = require('../model')
 
 // create types
 const UserType = new GraphQLObjectType({
@@ -21,14 +22,16 @@ const UserType = new GraphQLObjectType({
     posts: {
       type: new GraphQLList(PostType),
       resolve: (parent, _args) => {
-        return postsData.filter((post) => post.userId === parent.id)
+        // return postsData.filter((post) => post.userId === parent.id)
+        return PostModel.find({ userId: parent.id })
       },
     },
 
     hobbies: {
       type: new GraphQLList(HobbyType),
       resolve: (parent, _args) => {
-        return hobbiesData.filter((hobby) => hobby.userId === parent.id)
+        // return hobbiesData.filter((hobby) => hobby.userId === parent.id)
+        return HobbyModel.find({ userId: parent.id })
       },
     },
   }),
@@ -44,7 +47,8 @@ const HobbyType = new GraphQLObjectType({
     user: {
       type: UserType,
       resolve: (parent, _args) => {
-        return usersData.find((user) => user.id === parent.userId)
+        // return usersData.find((user) => user.id === parent.userId)
+        return UserModel.findById(parent.userId)
       },
     },
   }),
@@ -59,7 +63,8 @@ const PostType = new GraphQLObjectType({
     user: {
       type: UserType,
       resolve: (parent, _args) => {
-        return usersData.find((user) => user.id === parent.userId)
+        // return usersData.find((user) => user.id === parent.userId)
+        return UserModel.findById(parent.userId)
       },
     },
   }),
