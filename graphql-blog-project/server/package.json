@@ -16,7 +16,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",
-    "graphql": "^15.6.1"
+    "graphql": "^15.6.1",
+    "mongoose": "^6.0.9"
   },
   "devDependencies": {
     "faker": "^5.5.3",

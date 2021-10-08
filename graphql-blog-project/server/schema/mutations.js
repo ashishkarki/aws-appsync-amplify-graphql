@@ -4,6 +4,7 @@ const {
   GraphQLInt,
   GraphQLID,
 } = require('graphql')
+const { UserModel, PostModel, HobbyModel } = require('../model')
 const { UserType, PostType, HobbyType } = require('./data-types')
 
 // Mutations
@@ -13,13 +14,15 @@ const Mutation = new GraphQLObjectType({
     createUser: {
       type: UserType,
       args: {
-        // id: { type: GraphQLID },
         name: { type: GraphQLString },
         age: { type: GraphQLInt },
         profession: { type: GraphQLString },
       },
       resolve(_parent, args) {
-        const newUser = { ...args }
+        const newUser = new UserModel({ ...args })
+
+        // save to mongoDB
+        newUser.save()
 
         return newUser
       },
@@ -32,7 +35,9 @@ const Mutation = new GraphQLObjectType({
         userId: { type: GraphQLID },
       },
       resolve(_, args) {
-        const newPost = { ...args }
+        const newPost = new PostModel({ ...args })
+
+        newPost.save()
 
         return newPost
       },
@@ -46,7 +51,9 @@ const Mutation = new GraphQLObjectType({
         userId: { type: GraphQLID },
       },
       resolve(_, args) {
-        const newHobby = { ...args }
+        const newHobby = new HobbyModel({ ...args })
+
+        newHobby.save()
 
         return newHobby
       },
