@@ -10,6 +10,9 @@ const { MONGO_ATLAS_URL } = require('./secrets')
 const EXPRESS_PORT = 5000
 /// end of variables
 
+// cors
+const cors = require('cors')
+
 // create the express app
 const app = express()
 
@@ -21,6 +24,9 @@ mongoose.connect(MONGO_ATLAS_URL, {
 mongoose.connection.once('open', () => {
   console.log('connected to mongo')
 })
+
+// enable cors for all origins
+app.use(cors())
 
 // endpoints
 app.use(
