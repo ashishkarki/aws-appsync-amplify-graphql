@@ -4,7 +4,16 @@ const mongoose = require('mongoose')
 
 const schema = require('./schema/schema')
 // const typesSchema = require('./schema/types_schema')
-const { MONGO_ATLAS_URL } = require('./secrets')
+let MONGO_ATLAS_URL = ''
+try {
+  MONGO_ATLAS_URL = require('./secrets')
+} catch (error) {
+  if (error.code === 'MODULE_NOT_FOUND') {
+    MONGO_ATLAS_URL = process.env.MONGO_ATLAS_URL
+  } else {
+    throw new Error(`Error during require of MONGO_ATLAS_URL in app.js`)
+  }
+}
 
 /// variables
 const EXPRESS_PORT = process.env.PORT || 5000
