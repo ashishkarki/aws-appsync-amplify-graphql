@@ -52,7 +52,37 @@ const Mutation = new GraphQLObjectType({
         return updatedUser
       },
     },
+    removeUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve: (_, args) => {
+        const removedUser = UserModel.findByIdAndDelete(args.id).exec()
 
+        if (!removedUser) {
+          throw new Error(`User with id: ${args.id} not found!!`)
+        } else {
+          return removedUser
+        }
+      },
+    },
+
+    removePost: {
+      type: PostType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve: (_, args) => {
+        const removedPost = PostModel.findByIdAndDelete(args.id).exec()
+
+        if (!removedPost) {
+          throw new Error(`Post with id: ${args.id} not found!!`)
+        }
+
+        return removedPost
+      },
+    },
     updatePost: {
       type: PostType,
       args: {
@@ -91,6 +121,21 @@ const Mutation = new GraphQLObjectType({
       },
     },
 
+    removeHobby: {
+      type: HobbyType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve: async (_, args) => {
+        const removedHobby = await HobbyModel.findByIdAndDelete(args.id).exec()
+
+        if (!removedHobby) {
+          throw new Error(`Hobby with id: ${args.id} not found!!`)
+        }
+
+        return removedHobby
+      },
+    },
     updateHobby: {
       type: HobbyType,
       args: {
