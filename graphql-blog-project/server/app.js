@@ -7,7 +7,7 @@ const schema = require('./schema/schema')
 const { MONGO_ATLAS_URL } = require('./secrets')
 
 /// variables
-const EXPRESS_PORT = 5000
+const EXPRESS_PORT = process.env.PORT || 5000
 /// end of variables
 
 // cors
