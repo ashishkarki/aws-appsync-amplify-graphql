@@ -28,7 +28,54 @@ const Mutation = new GraphQLObjectType({
         return newUser
       },
     },
+    updateUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLString },
+        age: { type: GraphQLInt },
+        profession: { type: GraphQLString },
+      },
+      resolve: (_parent, args) => {
+        const updatedUser = UserModel.findByIdAndUpdate(
+          args.id,
+          {
+            $set: {
+              ...args,
+            },
+          },
+          {
+            new: true,
+          },
+        )
 
+        return updatedUser
+      },
+    },
+
+    updatePost: {
+      type: PostType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        comment: { type: GraphQLString },
+        // userId: { type: GraphQLID },
+      },
+      resolve: (_parent, args) => {
+        const updatedPost = PostModel.findByIdAndUpdate(
+          args.id,
+          {
+            $set: {
+              ...args,
+            },
+          },
+          {
+            new: true,
+          },
+        )
+
+        return updatedPost
+      },
+    },
     createPost: {
       type: PostType,
       args: {
@@ -44,6 +91,30 @@ const Mutation = new GraphQLObjectType({
       },
     },
 
+    updateHobby: {
+      type: HobbyType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        title: { type: GraphQLString },
+        description: { type: GraphQLString },
+        // userId: { type: GraphQLID },
+      },
+      resolve: (_parent, args) => {
+        const updatedHobby = HobbyModel.findByIdAndUpdate(
+          args.id,
+          {
+            $set: {
+              ...args,
+            },
+          },
+          {
+            new: true,
+          },
+        )
+
+        return updatedHobby
+      },
+    },
     createHobby: {
       type: HobbyType,
       args: {
