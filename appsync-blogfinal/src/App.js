@@ -1,5 +1,5 @@
 import './App.scss'
-import DisplayPosts from './components/DisplayPosts'
+import DisplayPosts from './components/DisplayPosts/DisplayPosts'
 
 function App() {
   return (

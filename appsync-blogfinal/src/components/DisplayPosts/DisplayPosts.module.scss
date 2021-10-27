@@ -37,5 +37,22 @@
       margin: 0.25rem 10vw;
       padding: 0.25rem;
     }
+
+    .actionBtns {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      button {
+        margin: auto 0.2rem;
+        padding: 0.25rem;
+        border-radius: 5px;
+        border: 2px groove lightsalmon;
+
+        &:hover {
+          background-color: skyblue;
+        }
+      }
+    }
   }
 }

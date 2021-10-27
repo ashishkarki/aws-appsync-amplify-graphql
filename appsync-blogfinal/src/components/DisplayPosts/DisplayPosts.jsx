@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
-import { listPosts } from '../graphql/queries'
+import { listPosts } from '../../graphql/queries'
 import { API, graphqlOperation } from 'aws-amplify'
 import Loader from 'react-loader-spinner'
 
 import styles from './DisplayPosts.module.scss'
+import DeletePost from '../DeletePost/DeletePost'
+import EditPost from '../EditPost/EditPost'
 
 export class DisplayPosts extends Component {
   constructor() {
@@ -44,6 +46,11 @@ export class DisplayPosts extends Component {
                 </p>
 
                 <p className={styles.postBody}>{post.postBody}</p>
+
+                <div className={styles.actionBtns}>
+                  <EditPost />
+                  <DeletePost />
+                </div>
               </div>
             ))
           ) : (
