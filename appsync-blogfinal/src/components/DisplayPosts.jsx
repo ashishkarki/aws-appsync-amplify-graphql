@@ -37,7 +37,13 @@ export class DisplayPosts extends Component {
           {posts && posts.length ? (
             posts.map((post, idx) => (
               <div className={styles.post} key={idx}>
-                <h2> {post.postTitle} </h2>
+                <h2 className={styles.postTitle}> {post.postTitle} </h2>
+                <p className={styles.postSub}>
+                  Written by: {post.postOwnerUsername} on:
+                  {new Date(post.createdAt).toDateString()}
+                </p>
+
+                <p className={styles.postBody}>{post.postBody}</p>
               </div>
             ))
           ) : (
