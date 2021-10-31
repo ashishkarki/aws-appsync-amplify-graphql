@@ -6,8 +6,11 @@ import Loader from 'react-loader-spinner'
 import styles from './DisplayPosts.module.scss'
 import DeletePost from '../DeletePost/DeletePost'
 import EditPost from '../EditPost/EditPost'
+import { onCreatePost } from '../../graphql/subscriptions'
 
 export class DisplayPosts extends Component {
+  createPostListener = null
+
   constructor() {
     super()
 
@@ -17,7 +20,35 @@ export class DisplayPosts extends Component {
   }
 
   componentDidMount = async () => {
+    console.log(`DisplayPosts component: componentDidMount called..`)
     this.getPosts()
+
+    this.createPostListener = API.graphql(graphqlOperation(onCreatePost))
+      // .subscribe({
+      //   next: (postData) => {
+      //     const newPost = postData.value.data.onCreatePost
+      //     const existingPosts = this.state.posts.filter(
+      //       (post) => post.id !== newPost.id,
+      //     )
+
+      //     const updatedPosts = [newPost, ...existingPosts]
+      //     this.setState({ posts: updatedPosts })
+      //   },
+      // })
+      .subscribe((observerOrNext) => {
+        console.log(`createPostListener: ${JSON.stringify(observerOrNext)}`)
+        const newPost = observerOrNext.value.data.onCreatePost
+
+        this.setState({
+          posts: [newPost, ...this.state.posts],
+        })
+      })
+  }
+
+  componentDidUnmount = () => {
+    if (this.createPostListener !== null) {
+      this.createPostListener.unsubscribe()
+    }
   }
 
   getPosts = async () => {

@@ -17,6 +17,7 @@ const CreatePost = () => {
 
   const handleAddPost = async (event) => {
     event.preventDefault()
+    console.log(`CreatePost::state.post is ${JSON.stringify(post)}`)
 
     const input = {
       postOwnerId: post.postOwnerId || EMPTY_POST.postOwnerId,
@@ -26,7 +27,7 @@ const CreatePost = () => {
       createdAt: new Date().toISOString(),
     }
 
-    console.log(`input is ${JSON.stringify(input)}`)
+    console.log(`CreatePost::input is ${JSON.stringify(input)}`)
 
     setLoading(true)
     const graphqlResult = await API.graphql(
@@ -45,6 +46,7 @@ const CreatePost = () => {
       }`,
     )
     setPost({
+      ...post,
       [event.target.name]: event.target.value,
     })
   }
