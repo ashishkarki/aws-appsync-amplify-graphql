@@ -22,7 +22,7 @@ export class DisplayPosts extends Component {
 
   getPosts = async () => {
     const postResult = await API.graphql(graphqlOperation(listPosts))
-    console.log(`All posts: ${postResult.data.listPosts.items}`)
+    // console.log(`All posts: ${postResult.data.listPosts.items}`)
 
     this.setState({
       posts: postResult.data.listPosts.items,
@@ -59,6 +59,7 @@ export class DisplayPosts extends Component {
               color="black"
               height={100}
               width={100}
+              timeout={3000}
             />
           )}
         </div>
