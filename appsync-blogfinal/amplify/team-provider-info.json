@@ -10,6 +10,11 @@
       "StackName": "amplify-appsyncblogfinal-dev-113708",
       "StackId": "arn:aws:cloudformation:us-east-1:473127991309:stack/amplify-appsyncblogfinal-dev-113708/b56ad1e0-30a0-11ec-bf47-0e37b69102f3",
       "AmplifyAppId": "d3c67v87n5adji"
+    },
+    "categories": {
+      "auth": {
+        "appsyncblogfinald3410fdf": {}
+      }
     }
   }
 }
