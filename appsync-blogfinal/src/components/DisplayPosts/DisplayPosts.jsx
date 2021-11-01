@@ -23,29 +23,19 @@ export class DisplayPosts extends Component {
     console.log(`DisplayPosts component: componentDidMount called..`)
     this.getPosts()
 
-    this.createPostListener = API.graphql(graphqlOperation(onCreatePost))
-      // .subscribe({
-      //   next: (postData) => {
-      //     const newPost = postData.value.data.onCreatePost
-      //     const existingPosts = this.state.posts.filter(
-      //       (post) => post.id !== newPost.id,
-      //     )
+    this.createPostListener = API.graphql(
+      graphqlOperation(onCreatePost),
+    ).subscribe((observerOrNext) => {
+      console.log(`createPostListener: ${JSON.stringify(observerOrNext)}`)
+      const newPost = observerOrNext.value.data.onCreatePost
 
-      //     const updatedPosts = [newPost, ...existingPosts]
-      //     this.setState({ posts: updatedPosts })
-      //   },
-      // })
-      .subscribe((observerOrNext) => {
-        console.log(`createPostListener: ${JSON.stringify(observerOrNext)}`)
-        const newPost = observerOrNext.value.data.onCreatePost
-
-        this.setState({
-          posts: [newPost, ...this.state.posts],
-        })
+      this.setState({
+        posts: [newPost, ...this.state.posts],
       })
+    })
   }
 
-  componentDidUnmount = () => {
+  componentWillUnmount = () => {
     if (this.createPostListener !== null) {
       this.createPostListener.unsubscribe()
     }
