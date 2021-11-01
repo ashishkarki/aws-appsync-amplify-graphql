@@ -1,5 +1,5 @@
-import { API, graphqlOperation } from 'aws-amplify'
-import React, { useState } from 'react'
+import { API, graphqlOperation, Auth } from 'aws-amplify'
+import React, { useEffect, useState } from 'react'
 import Loader from 'react-loader-spinner'
 import { createPost } from '../../graphql/mutations'
 
@@ -15,6 +15,35 @@ const CreatePost = () => {
   const [post, setPost] = useState(EMPTY_POST)
   const [loading, setLoading] = useState(false)
 
+  // [] as dependencies mean load only first time and
+  // so this construct is equivalent to componentDidMount
+  // useEffect(() => {
+  //   console.log(`CreatePost: useEffect with no deps at all!!`)
+  // })
+  useEffect(() => {
+    async function fetchUser() {
+      await Auth.currentUserInfo().then((user) => {
+        // console.log(`CreatePost: current User is ${user.attributes.sub}`)
+
+        // setPost({
+        //   ...post,
+        //   postOwnerId: user.attributes.sub,
+        //   postOwnerUsername: user.username,
+        // })
+        setPost((prevPost) => {
+          // console.log(`CreatePost: prevPost: ${JSON.stringify(prevPost)}`)
+          return {
+            ...prevPost,
+            postOwnerId: user.attributes.sub,
+            postOwnerUsername: user.username,
+          }
+        })
+      })
+    }
+
+    fetchUser()
+  }, [])
+
   const handleAddPost = async (event) => {
     event.preventDefault()
     console.log(`CreatePost::state.post is ${JSON.stringify(post)}`)
@@ -27,7 +56,7 @@ const CreatePost = () => {
       createdAt: new Date().toISOString(),
     }
 
-    console.log(`CreatePost::input is ${JSON.stringify(input)}`)
+    // console.log(`CreatePost::input is ${JSON.stringify(input)}`)
 
     setLoading(true)
     const graphqlResult = await API.graphql(
@@ -40,11 +69,11 @@ const CreatePost = () => {
   }
 
   const handleChangePost = (event) => {
-    console.log(
-      `handlechange, name: ${[event.target.name]}, value: ${
-        event.target.value
-      }`,
-    )
+    // console.log(
+    //   `handlechange, name: ${[event.target.name]}, value: ${
+    //     event.target.value
+    //   }`,
+    // )
     setPost({
       ...post,
       [event.target.name]: event.target.value,
