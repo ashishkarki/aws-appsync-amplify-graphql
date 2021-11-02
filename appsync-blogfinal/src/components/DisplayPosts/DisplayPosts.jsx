@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { listPosts } from '../../graphql/queries'
-import { API, graphqlOperation } from 'aws-amplify'
+import { API, Auth, graphqlOperation } from 'aws-amplify'
 
 import styles from './DisplayPosts.module.scss'
 import DeletePost from '../DeletePost/DeletePost'
@@ -25,11 +25,20 @@ export class DisplayPosts extends Component {
         message: 'Please check console',
         type: 'info',
       },
+      postOwnerUserId: '', // who created this post
     }
   }
 
   componentDidMount = async () => {
-    // console.log(`DisplayPosts component: componentDidMount called..`)
+    // get and store the post owner id
+    await Auth.currentUserInfo().then((currentUser) =>
+      this.setState({
+        ...this.state,
+        postOwnerUserId: currentUser.attributes.sub,
+      }),
+    )
+
+    // get all posts
     this.getPosts()
 
     this.createPostListener = await API.graphql(
@@ -144,15 +153,17 @@ export class DisplayPosts extends Component {
 
                 <p className={styles.postBody}>{post.postBody}</p>
 
-                <div className={styles.actionBtns}>
-                  <EditPost />
-                  <DeletePost
-                    deletedPost={post}
-                    handlePostDeletion={(deletedPost) =>
-                      this.handlePostDeletionParent(deletedPost)
-                    }
-                  />
-                </div>
+                {this.state.postOwnerUserId === post.postOwnerId && (
+                  <div className={styles.actionBtns}>
+                    <EditPost />
+                    <DeletePost
+                      deletedPost={post}
+                      handlePostDeletion={(deletedPost) =>
+                        this.handlePostDeletionParent(deletedPost)
+                      }
+                    />
+                  </div>
+                )}
               </div>
             ))
           ) : (
