@@ -29,13 +29,12 @@ export class DisplayPosts extends Component {
   }
 
   componentDidMount = async () => {
-    console.log(`DisplayPosts component: componentDidMount called..`)
+    // console.log(`DisplayPosts component: componentDidMount called..`)
     this.getPosts()
 
     this.createPostListener = await API.graphql(
       graphqlOperation(onCreatePost),
     ).subscribe((observerOrNext) => {
-      console.log(`createPostListener: ${JSON.stringify(observerOrNext)}`)
       const newPost = observerOrNext.value.data.onCreatePost
 
       this.setState({

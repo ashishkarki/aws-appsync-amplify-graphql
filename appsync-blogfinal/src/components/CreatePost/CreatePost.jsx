@@ -1,25 +1,33 @@
 import { API, graphqlOperation, Auth } from 'aws-amplify'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { createPost } from '../../graphql/mutations'
 import LoadingIndicator from '../LoadingIndicator/LoadingIndicator'
 
 import styles from './CreatePost.module.scss'
 
 const CreatePost = () => {
+  const postCounterRef = useRef(1)
+
   const EMPTY_POST = {
-    postOwnerId: 'dummyOwnerId129',
-    postOwnerUsername: 'dummyOwnerUsername128',
-    postTitle: 'dummyPostTitle234',
-    postBody: 'dummyPostBody564',
+    postOwnerId: 'DummyPostOwnerId-' + postCounterRef.current,
+    postOwnerUsername: 'DummyOwnerUsername-' + postCounterRef.current,
+    postTitle:
+      'DummyPostTitle-' +
+      postCounterRef.current +
+      '-' +
+      new Date().getMilliseconds(),
+    postBody: 'DummyPostBody-' + postCounterRef.current,
   }
+
   const [post, setPost] = useState(EMPTY_POST)
   const [loading, setLoading] = useState(false)
 
   // [] as dependencies mean load only first time and
   // so this construct is equivalent to componentDidMount
-  // useEffect(() => {
-  //   console.log(`CreatePost: useEffect with no deps at all!!`)
-  // })
+  useEffect(() => {
+    // console.log(`CreatePost: useEffect with no deps at all!!`)
+    postCounterRef.current += 1
+  })
   useEffect(() => {
     async function fetchUser() {
       await Auth.currentUserInfo().then((user) => {
@@ -43,7 +51,7 @@ const CreatePost = () => {
 
   const handleAddPost = async (event) => {
     event.preventDefault()
-    console.log(`CreatePost::state.post is ${JSON.stringify(post)}`)
+    // console.log(`CreatePost::state.post is ${JSON.stringify(post)}`)
 
     const input = {
       postOwnerId: post.postOwnerId || EMPTY_POST.postOwnerId,
@@ -54,11 +62,10 @@ const CreatePost = () => {
     }
 
     setLoading(true)
-    const graphqlResult = await API.graphql(
-      graphqlOperation(createPost, { input }),
-    )
+    // const _graphqlResult =
+    await API.graphql(graphqlOperation(createPost, { input }))
     setLoading(false)
-    console.log(`result: ${JSON.stringify(graphqlResult)}`)
+    // console.log(`result: ${JSON.stringify(graphqlResult)}`)
 
     setPost(EMPTY_POST)
   }
