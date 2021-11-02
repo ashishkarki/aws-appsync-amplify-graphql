@@ -1,7 +1,7 @@
 import { API, graphqlOperation, Auth } from 'aws-amplify'
 import React, { useEffect, useState } from 'react'
-import Loader from 'react-loader-spinner'
 import { createPost } from '../../graphql/mutations'
+import LoadingIndicator from '../LoadingIndicator/LoadingIndicator'
 
 import styles from './CreatePost.module.scss'
 
@@ -23,15 +23,12 @@ const CreatePost = () => {
   useEffect(() => {
     async function fetchUser() {
       await Auth.currentUserInfo().then((user) => {
-        // console.log(`CreatePost: current User is ${user.attributes.sub}`)
-
         // setPost({
         //   ...post,
         //   postOwnerId: user.attributes.sub,
         //   postOwnerUsername: user.username,
         // })
         setPost((prevPost) => {
-          // console.log(`CreatePost: prevPost: ${JSON.stringify(prevPost)}`)
           return {
             ...prevPost,
             postOwnerId: user.attributes.sub,
@@ -56,8 +53,6 @@ const CreatePost = () => {
       createdAt: new Date().toISOString(),
     }
 
-    // console.log(`CreatePost::input is ${JSON.stringify(input)}`)
-
     setLoading(true)
     const graphqlResult = await API.graphql(
       graphqlOperation(createPost, { input }),
@@ -69,53 +64,46 @@ const CreatePost = () => {
   }
 
   const handleChangePost = (event) => {
-    // console.log(
-    //   `handlechange, name: ${[event.target.name]}, value: ${
-    //     event.target.value
-    //   }`,
-    // )
     setPost({
       ...post,
       [event.target.name]: event.target.value,
     })
   }
 
-  return loading ? (
-    <Loader
-      type="RevolvingDot"
-      color="black"
-      height={100}
-      width={100}
-      timeout={3000}
-    />
-  ) : (
-    <form className={styles.createPost} onSubmit={handleAddPost}>
-      <input
-        type="text"
-        name="postTitle"
-        onChange={handleChangePost}
-        value={post.postTitle}
-        placeholder="post title"
-        required
-      />
+  return (
+    <div className={styles.createPost}>
+      {loading ? (
+        <LoadingIndicator />
+      ) : (
+        <form className={styles.createPostForm} onSubmit={handleAddPost}>
+          <input
+            type="text"
+            name="postTitle"
+            onChange={handleChangePost}
+            value={post.postTitle}
+            placeholder="post title"
+            required
+          />
 
-      <textarea
-        name="postBody"
-        cols="40"
-        rows="3"
-        onChange={handleChangePost}
-        value={post.postBody}
-        placeholder="Post Body"
-        required
-      />
+          <textarea
+            name="postBody"
+            cols="40"
+            rows="3"
+            onChange={handleChangePost}
+            value={post.postBody}
+            placeholder="Post Body"
+            required
+          />
 
-      <input
-        type="submit"
-        value="Create Post"
-        className={styles.submitBtn}
-        onClick={handleAddPost}
-      />
-    </form>
+          <input
+            type="submit"
+            value="Create Post"
+            className={styles.submitBtn}
+            onClick={handleAddPost}
+          />
+        </form>
+      )}
+    </div>
   )
 }
 
