@@ -1,0 +1,15 @@
+.App {
+  text-align: center;
+
+  border: 2px groove slateblue;
+  margin: 10vh 10vw;
+  padding: 1rem;
+
+  .signOut {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    margin: 0.25rem auto;
+  }
+}

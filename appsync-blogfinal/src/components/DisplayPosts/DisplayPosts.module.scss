@@ -1,0 +1,58 @@
+.header {
+  font-size: 2rem;
+}
+
+.posts {
+  background-color: rgb(235, 235, 212);
+  border: 2px groove goldenrod;
+  margin: 1rem;
+  padding: 1rem;
+
+  .post {
+    border: 1px solid green;
+    border-radius: 0.25rem;
+    box-shadow: 2px 3px 3px;
+    background-color: rgb(161, 240, 236);
+
+    margin: 0.5rem;
+    padding: 0.5rem;
+
+    .postTitle {
+      font-size: 1.5rem;
+      text-transform: capitalize;
+      text-decoration: underline;
+      margin-bottom: 0.3rem;
+
+      &::before {
+        content: 'Title: ';
+      }
+    }
+
+    .postSub {
+      font-style: italic;
+    }
+
+    .postBody {
+      background-color: darken($color: rgb(161, 240, 236), $amount: 40);
+      margin: 0.25rem 10vw;
+      padding: 0.25rem;
+    }
+
+    .actionBtns {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      button {
+        margin: auto 0.2rem;
+        padding: 0.25rem;
+        border-radius: 5px;
+        border: 2px groove lightsalmon;
+
+        &:hover {
+          background-color: skyblue;
+        }
+      }
+    }
+  }
+}
