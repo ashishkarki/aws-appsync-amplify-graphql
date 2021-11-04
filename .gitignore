@@ -1,0 +1,8 @@
+appsync-blogfinal/amplify/#current-cloud-backend
+*.vtl
+appsync-blogfinal/amplify/backend/api/appsyncblogfinal/build
+appsync-blogfinal/amplify/.config
+appsync-blogfinal/node_modules
+*.sample
+aws-exports.js
+amplify-meta.json
