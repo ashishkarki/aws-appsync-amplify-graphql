@@ -39,16 +39,17 @@ const CreatePost = () => {
         setPost((prevPost) => {
           return {
             ...prevPost,
-            postOwnerId: user.attributes.sub,
-            postOwnerUsername: user.username,
+            postOwnerId: user?.attributes?.sub,
+            postOwnerUsername: user?.username,
           }
         })
       })
     }
 
     fetchUser()
-  }, [])
+  })
 
+  // handle the final form submission
   const handleAddPost = async (event) => {
     event.preventDefault()
     // console.log(`CreatePost::state.post is ${JSON.stringify(post)}`)

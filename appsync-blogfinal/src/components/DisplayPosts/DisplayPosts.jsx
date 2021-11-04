@@ -5,7 +5,11 @@ import { API, Auth, graphqlOperation } from 'aws-amplify'
 import styles from './DisplayPosts.module.scss'
 import DeletePost from '../DeletePost/DeletePost'
 import EditPost from '../EditPost/EditPost'
-import { onCreatePost, onDeletePost } from '../../graphql/subscriptions'
+import {
+  onCreatePost,
+  onDeletePost,
+  onUpdatePost,
+} from '../../graphql/subscriptions'
 import LoadingIndicator from '../LoadingIndicator/LoadingIndicator'
 import { deletePost } from '../../graphql/mutations'
 import ToastDisplayer from '../ToastDisplayer/ToastDisplayer'
@@ -13,6 +17,7 @@ import ToastDisplayer from '../ToastDisplayer/ToastDisplayer'
 export class DisplayPosts extends Component {
   createPostListener = null
   deletePostListener = null
+  updatePostListener = null
 
   constructor() {
     super()
@@ -65,6 +70,25 @@ export class DisplayPosts extends Component {
           posts: updatedPosts,
         })
       })
+
+    this.updatePostListener = await API.graphql(
+      graphqlOperation(onUpdatePost),
+    ).subscribe((observerOrNext) => {
+      const postThatGotUpdated = observerOrNext.value.data.onUpdatePost
+      const existingListOfPosts = this.state.posts
+
+      const updatedListOfPosts = existingListOfPosts.map((post) => {
+        if (post.id === postThatGotUpdated.id) {
+          return postThatGotUpdated
+        }
+        return post
+      })
+
+      this.setState({
+        ...this.state,
+        posts: updatedListOfPosts,
+      })
+    })
   }
 
   componentWillUnmount = () => {
@@ -74,6 +98,10 @@ export class DisplayPosts extends Component {
 
     if (this.deletePostListener !== null) {
       this.deletePostListener.unsubscribe()
+    }
+
+    if (this.updatePostListener !== null) {
+      this.updatePostListener.unsubscribe()
     }
   }
 
@@ -152,10 +180,16 @@ export class DisplayPosts extends Component {
                 </p>
 
                 <p className={styles.postBody}>{post.postBody}</p>
-
+                <label htmlFor="">
+                  {this.state.postOwnerUserId}---{post.postOwnerId}
+                </label>
                 {this.state.postOwnerUserId === post.postOwnerId && (
                   <div className={styles.actionBtns}>
-                    <EditPost />
+                    <EditPost
+                      postId={post.id}
+                      postTitle={post.postTitle}
+                      postBody={post.postBody}
+                    />
                     <DeletePost
                       deletedPost={post}
                       handlePostDeletion={(deletedPost) =>
