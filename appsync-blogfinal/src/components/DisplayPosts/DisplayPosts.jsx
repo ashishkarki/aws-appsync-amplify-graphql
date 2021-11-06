@@ -13,6 +13,7 @@ import {
 import LoadingIndicator from '../LoadingIndicator/LoadingIndicator'
 import { deletePost } from '../../graphql/mutations'
 import ToastDisplayer from '../ToastDisplayer/ToastDisplayer'
+import CreatePostComment from '../CreatePostComment/CreatePostComment'
 
 export class DisplayPosts extends Component {
   createPostListener = null
@@ -107,8 +108,17 @@ export class DisplayPosts extends Component {
 
   getPosts = async () => {
     this.setLoadingState(true)
+
+    this.setState({
+      ...this.state,
+      toast: {
+        show: true,
+        message: 'Please wait, loading your posts',
+        type: 'primary',
+      },
+    })
     const postResult = await API.graphql(graphqlOperation(listPosts))
-    // console.log(`All posts: ${postResult.data.listPosts.items}`)
+
     this.setLoadingState(false)
 
     this.setState({
@@ -153,10 +163,6 @@ export class DisplayPosts extends Component {
   }
 
   render() {
-    if (this.state.loading) {
-      return <LoadingIndicator />
-    }
-
     const { posts } = this.state
 
     return (
@@ -169,6 +175,7 @@ export class DisplayPosts extends Component {
         )}
 
         <div className={styles.header}> List of Posts</div>
+
         <div className={styles.posts}>
           {!this.state.loading ? (
             posts.map((post, idx) => (
@@ -178,7 +185,6 @@ export class DisplayPosts extends Component {
                   Written by: {post.postOwnerUsername} on:
                   {new Date(post.createdAt).toDateString()}
                 </p>
-
                 <p className={styles.postBody}>{post.postBody}</p>
                 <label htmlFor="">
                   {this.state.postOwnerUserId}---{post.postOwnerId}
@@ -198,10 +204,16 @@ export class DisplayPosts extends Component {
                     />
                   </div>
                 )}
+
+                <div className={styles.comment}>
+                  <CreatePostComment postId={post.id} />
+                </div>
               </div>
             ))
           ) : (
-            <LoadingIndicator />
+            <div>
+              <LoadingIndicator />
+            </div>
           )}
         </div>
       </div>
