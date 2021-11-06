@@ -6,6 +6,7 @@ import styles from './DisplayPosts.module.scss'
 import DeletePost from '../DeletePost/DeletePost'
 import EditPost from '../EditPost/EditPost'
 import {
+  onCreateComment,
   onCreatePost,
   onDeletePost,
   onUpdatePost,
@@ -13,11 +14,14 @@ import {
 import LoadingIndicator from '../LoadingIndicator/LoadingIndicator'
 import { deletePost } from '../../graphql/mutations'
 import ToastDisplayer from '../ToastDisplayer/ToastDisplayer'
+import CreatePostComment from '../CreatePostComment/CreatePostComment'
+import ShowPostComment from '../ShowPostComment/ShowPostComment'
 
 export class DisplayPosts extends Component {
   createPostListener = null
   deletePostListener = null
   updatePostListener = null
+  createPostCommentListener = null
 
   constructor() {
     super()
@@ -89,6 +93,28 @@ export class DisplayPosts extends Component {
         posts: updatedListOfPosts,
       })
     })
+
+    this.createPostCommentListener = await API.graphql(
+      graphqlOperation(onCreateComment),
+    ).subscribe((observerOrNext) => {
+      const newPostComment = observerOrNext.value.data.onCreateComment
+      // console.log('newPostComment', newPostComment)
+      const existingListOfPosts = this.state.posts
+
+      const updatedListOfPosts = existingListOfPosts.map((post) => {
+        // console.log(post.id, newPostComment.post.id)
+        // console.log('post in comment listener', JSON.stringify(post))
+        if (post.id === newPostComment.post.id) {
+          post.comments.items.push(newPostComment)
+        }
+        return post
+      })
+      console.log(`post comment: ${JSON.stringify(updatedListOfPosts)}`)
+      this.setState({
+        ...this.state,
+        posts: updatedListOfPosts,
+      })
+    })
   }
 
   componentWillUnmount = () => {
@@ -103,12 +129,25 @@ export class DisplayPosts extends Component {
     if (this.updatePostListener !== null) {
       this.updatePostListener.unsubscribe()
     }
+
+    if (this.createPostCommentListener !== null) {
+      this.createPostCommentListener.unsubscribe()
+    }
   }
 
   getPosts = async () => {
     this.setLoadingState(true)
+
+    this.setState({
+      ...this.state,
+      toast: {
+        show: true,
+        message: 'Please wait, loading your posts',
+        type: 'primary',
+      },
+    })
     const postResult = await API.graphql(graphqlOperation(listPosts))
-    // console.log(`All posts: ${postResult.data.listPosts.items}`)
+
     this.setLoadingState(false)
 
     this.setState({
@@ -153,10 +192,6 @@ export class DisplayPosts extends Component {
   }
 
   render() {
-    if (this.state.loading) {
-      return <LoadingIndicator />
-    }
-
     const { posts } = this.state
 
     return (
@@ -169,6 +204,7 @@ export class DisplayPosts extends Component {
         )}
 
         <div className={styles.header}> List of Posts</div>
+
         <div className={styles.posts}>
           {!this.state.loading ? (
             posts.map((post, idx) => (
@@ -178,7 +214,6 @@ export class DisplayPosts extends Component {
                   Written by: {post.postOwnerUsername} on:
                   {new Date(post.createdAt).toDateString()}
                 </p>
-
                 <p className={styles.postBody}>{post.postBody}</p>
                 <label htmlFor="">
                   {this.state.postOwnerUserId}---{post.postOwnerId}
@@ -198,10 +233,25 @@ export class DisplayPosts extends Component {
                     />
                   </div>
                 )}
+
+                <div className={styles.comment}>
+                  <CreatePostComment commentPostId={post.id} />
+
+                  {post.comments.items.length > 0 && (
+                    <span>
+                      Comments:
+                      {post.comments.items.map((comment, idx) => (
+                        <ShowPostComment key={idx} {...comment} />
+                      ))}
+                    </span>
+                  )}
+                </div>
               </div>
             ))
           ) : (
-            <LoadingIndicator />
+            <div>
+              <LoadingIndicator />
+            </div>
           )}
         </div>
       </div>

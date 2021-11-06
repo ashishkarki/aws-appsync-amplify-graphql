@@ -38,7 +38,7 @@ export const syncPosts = /* GraphQL */ `
       startedAt
     }
   }
-`;
+`
 export const getPost = /* GraphQL */ `
   query GetPost($id: ID!) {
     getPost(id: $id) {
@@ -84,7 +84,7 @@ export const getPost = /* GraphQL */ `
       updatedAt
     }
   }
-`;
+`
 export const listPosts = /* GraphQL */ `
   query ListPosts(
     $filter: ModelPostFilterInput
@@ -100,12 +100,21 @@ export const listPosts = /* GraphQL */ `
         postBody
         createdAt
         comments {
-          nextToken
-          startedAt
+          items {
+            id
+            commentOwnerId
+            commentOwnerUsername
+            content
+            createdAt
+          }
         }
         likes {
-          nextToken
-          startedAt
+          items {
+            id
+            numberLikes
+            likeOwnerId
+            likeOwnerUsername
+          }
         }
         _version
         _deleted
@@ -116,7 +125,7 @@ export const listPosts = /* GraphQL */ `
       startedAt
     }
   }
-`;
+`
 export const syncComments = /* GraphQL */ `
   query SyncComments(
     $filter: ModelCommentFilterInput
@@ -157,7 +166,7 @@ export const syncComments = /* GraphQL */ `
       startedAt
     }
   }
-`;
+`
 export const getComment = /* GraphQL */ `
   query GetComment($id: ID!) {
     getComment(id: $id) {
@@ -192,7 +201,7 @@ export const getComment = /* GraphQL */ `
       updatedAt
     }
   }
-`;
+`
 export const listComments = /* GraphQL */ `
   query ListComments(
     $filter: ModelCommentFilterInput
@@ -227,7 +236,7 @@ export const listComments = /* GraphQL */ `
       startedAt
     }
   }
-`;
+`
 export const syncLikes = /* GraphQL */ `
   query SyncLikes(
     $filter: ModelLikeFilterInput
@@ -268,7 +277,7 @@ export const syncLikes = /* GraphQL */ `
       startedAt
     }
   }
-`;
+`
 export const getLike = /* GraphQL */ `
   query GetLike($id: ID!) {
     getLike(id: $id) {
@@ -303,7 +312,7 @@ export const getLike = /* GraphQL */ `
       updatedAt
     }
   }
-`;
+`
 export const listLikes = /* GraphQL */ `
   query ListLikes(
     $filter: ModelLikeFilterInput
@@ -338,4 +347,4 @@ export const listLikes = /* GraphQL */ `
       startedAt
     }
   }
-`;
+`
