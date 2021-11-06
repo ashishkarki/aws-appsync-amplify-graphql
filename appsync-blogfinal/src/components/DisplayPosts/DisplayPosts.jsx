@@ -6,6 +6,7 @@ import styles from './DisplayPosts.module.scss'
 import DeletePost from '../DeletePost/DeletePost'
 import EditPost from '../EditPost/EditPost'
 import {
+  onCreateComment,
   onCreatePost,
   onDeletePost,
   onUpdatePost,
@@ -14,11 +15,13 @@ import LoadingIndicator from '../LoadingIndicator/LoadingIndicator'
 import { deletePost } from '../../graphql/mutations'
 import ToastDisplayer from '../ToastDisplayer/ToastDisplayer'
 import CreatePostComment from '../CreatePostComment/CreatePostComment'
+import ShowPostComment from '../ShowPostComment/ShowPostComment'
 
 export class DisplayPosts extends Component {
   createPostListener = null
   deletePostListener = null
   updatePostListener = null
+  createPostCommentListener = null
 
   constructor() {
     super()
@@ -90,6 +93,28 @@ export class DisplayPosts extends Component {
         posts: updatedListOfPosts,
       })
     })
+
+    this.createPostCommentListener = await API.graphql(
+      graphqlOperation(onCreateComment),
+    ).subscribe((observerOrNext) => {
+      const newPostComment = observerOrNext.value.data.onCreateComment
+      // console.log('newPostComment', newPostComment)
+      const existingListOfPosts = this.state.posts
+
+      const updatedListOfPosts = existingListOfPosts.map((post) => {
+        // console.log(post.id, newPostComment.post.id)
+        // console.log('post in comment listener', JSON.stringify(post))
+        if (post.id === newPostComment.post.id) {
+          post.comments.items.push(newPostComment)
+        }
+        return post
+      })
+      console.log(`post comment: ${JSON.stringify(updatedListOfPosts)}`)
+      this.setState({
+        ...this.state,
+        posts: updatedListOfPosts,
+      })
+    })
   }
 
   componentWillUnmount = () => {
@@ -103,6 +128,10 @@ export class DisplayPosts extends Component {
 
     if (this.updatePostListener !== null) {
       this.updatePostListener.unsubscribe()
+    }
+
+    if (this.createPostCommentListener !== null) {
+      this.createPostCommentListener.unsubscribe()
     }
   }
 
@@ -206,7 +235,16 @@ export class DisplayPosts extends Component {
                 )}
 
                 <div className={styles.comment}>
-                  <CreatePostComment postId={post.id} />
+                  <CreatePostComment commentPostId={post.id} />
+
+                  {post.comments.items.length > 0 && (
+                    <span>
+                      Comments:
+                      {post.comments.items.map((comment, idx) => (
+                        <ShowPostComment key={idx} {...comment} />
+                      ))}
+                    </span>
+                  )}
                 </div>
               </div>
             ))
